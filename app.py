@@ -1,4 +1,5 @@
-from flask import Flask,request, redirect, render_template
+from flask import Flask,request, render_template, url_for
+import flask
 from flask_sqlalchemy import SQLAlchemy 
 
 app = Flask(__name__)
@@ -37,11 +38,28 @@ def alter_database(object):
 
 @app.route("/")
 def index():
-    return "<h1>Blog</h1>"
+    return flask.redirect(url_for("blog"))
 
 @app.route("/blog")
 def blog():
-    return "Blogs"
+    return render_template("blog.html")
 
-if __name__ == '__app__':
-    app.run()
+@app.route('/newpost')
+def newpost():
+    return render_template("blogform.html")
+
+@app.route('/newpost',methods=["POST"])
+def add_blog():
+    blog_title = request.form['title']
+    blog_body = request.form['body']
+    if blog_body == "" or blog_body == " ":
+        feedback_message = "Please enter a body."
+        return render_template("blogform.html",
+        title = blog_title,
+        feedback = feedback_message)
+    else:
+        return flask.redirect(url_for("blog"))
+
+app.run()
+#if __name__ == '__app__':
+    
