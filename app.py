@@ -18,12 +18,8 @@ class Blog(db.Model):
         self.title = title
         self.body = body
 
-def create_blog():
-    print("What is the blog's name?")
-    blogname = input()
-    print("Enter the body to the blog. (Less than 1000 characters)")
-    body = input()
-    newblog = Blog(blogname, body)
+def create_blog(title, body):
+    newblog = Blog(title, body)
     alter_database(newblog)
 
 def alter_database(object):
@@ -58,6 +54,7 @@ def add_blog():
         title = blog_title,
         feedback = feedback_message)
     else:
+        create_blog(blog_title, blog_body)
         return flask.redirect(url_for("blog"))
 
 app.run()
