@@ -118,7 +118,15 @@ def add_blog():
     
     else:
         create_blog(blog_title, blog_body)
-        return flask.redirect(url_for("blog"))
+        new_post = "blog" + str(get_post_total())
+        return flask.redirect((new_post))
+
+@app.route('/test<post_id>')
+def test(post_id):
+    #We want to redirect to a post with the provided id number from the url
+    id = post_id
+    url = "blog"+str(id)
+    return flask.redirect((url))
 
 app.run()
 #if __name__ == '__app__':
