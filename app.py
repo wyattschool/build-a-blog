@@ -19,6 +19,16 @@ class Blog(db.Model):
         self.title = title
         self.body = body
 
+def get_post_total():
+    blog_ids = []
+    with app.app_context():
+        blogs = (db.session.query(Blog.id).all())
+        for row in blogs:
+            blog_id = str(row["id"])
+            blog_ids.append(blog_id)
+        post_total = len(blog_ids)
+        return post_total
+        
 def create_blog(title, body):
     newblog = Blog(title, body)
     alter_database(newblog)
@@ -68,16 +78,19 @@ def blog():
     titles = titles,
     bodies = bodies)
 
-@app.route("/blog<id>",methods=["GET"])
+@app.route("/blog<int:id>",methods=["GET"])
 def displaysingle_post(id=None):
-    with app.app_context():
-        blogs = (db.session.query(Blog.title,Blog.body).filter(Blog.id == id))
-        for row in blogs:
-            blog_title = str(row["title"])
-            blog_body = str(row["body"])
-    return render_template("post.html",
-    title = blog_title,
-    body = blog_body)
+    if id > get_post_total() or id == 0:
+        return flask.redirect(url_for("blog"))
+    else:
+        with app.app_context():
+            blogs = (db.session.query(Blog.title,Blog.body).filter(Blog.id == id))
+            for row in blogs:
+                blog_title = str(row["title"])
+                blog_body = str(row["body"])
+        return render_template("post.html",
+        title = blog_title,
+        body = blog_body)
 
 @app.route('/newpost')
 def newpost():
