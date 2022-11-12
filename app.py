@@ -34,7 +34,6 @@ def alter_database(object):
             db.session.commit()
 
 def get_posts():
-    #blogs = []
     blog_output = []
     with app.app_context():
         blogs = (db.session.query(Blog.title,Blog.body).all())
