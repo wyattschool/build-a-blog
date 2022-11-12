@@ -5,14 +5,14 @@
     </head>
 
     <header>
-        <a href="/blog">Main Blog Page</a>
-        <a href="/newpost">Add a Blog Entry</a>
+        <a href="/blog" id="headerLink">Main Blog Page</a>
+        <a href="/newpost" id="headerLink">Add a Blog Entry</a>
     </header>
 
     <body>
         <h1 id="pageTitle">Build a Blog</h1>
         {% for i in range(0, titlesLen) %}
-        <h2 id={{i}}>{{ titles[i] }}</h2>
+        <a href="blog{{i}}" id="postLink"><h2 id={{i}}>{{ titles[i] }}</h2></a>
             {{ bodies[i] }}
             <hr>
             {% endfor %}
