@@ -1,7 +1,7 @@
 from flask import Flask,request, render_template, session, url_for
 import flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import select 
+from sqlalchemy import select
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -34,20 +34,16 @@ def alter_database(object):
             db.session.commit()
 
 def get_posts():
-    blogs = []
+    #blogs = []
+    blog_output = []
     with app.app_context():
-        id_list = (db.session.query(Blog.id).all())
-        id_count = len(id_list)
-        #query = "SELECT id FROM blog"
-        #result = int(db.engine.execute(query))
-        for i in range(id_count):
-            query = "SELECT title FROM blog WHERE id=" + str(i)
-            post_title = str(db.engine.execute(query))
-            query = "SELECT body FROM blog WHERE id=" + str(i)
-            post_body = str(db.engine.execute(query))
-            blog_post = post_title + post_body
-            blogs.append(blog_post)
-        return blogs
+        blogs = (db.session.query(Blog.title,Blog.body).all())
+        for row in blogs:
+            blog_title = str(row["title"])
+            blog_output.append(blog_title)
+            blog_body = str(row["body"])
+            blog_output.append(blog_body)
+        return blog_output
 
 @app.route("/")
 def index():
@@ -56,12 +52,23 @@ def index():
 @app.route("/blog")
 def blog():
     blogs = get_posts()
-    display_posts = ""
+    titles = []
+    bodies = []
+    i = 0
     for blog in blogs:
-        #post = """<h1>""" + post + """</h1>"""
-        display_posts += blog
+        mod = i % 2
+        print(mod)
+        if mod > 0:
+            bodies.append(blog)
+            i += 1
+        else:
+            titles.append(blog)
+            i += 1
+        
     return render_template("blog.html",
-    post = display_posts)
+    titlesLen = len(titles),
+    titles = titles,
+    bodies = bodies)
 
 @app.route('/newpost')
 def newpost():
