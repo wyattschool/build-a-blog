@@ -56,7 +56,6 @@ def blog():
     i = 0
     for blog in blogs:
         mod = i % 2
-        print(mod)
         if mod > 0:
             bodies.append(blog)
             i += 1
@@ -68,6 +67,17 @@ def blog():
     titlesLen = len(titles),
     titles = titles,
     bodies = bodies)
+
+@app.route("/blog<id>",methods=["GET"])
+def displaysingle_post(id=None):
+    with app.app_context():
+        blogs = (db.session.query(Blog.title,Blog.body).filter(Blog.id == id))
+        for row in blogs:
+            blog_title = str(row["title"])
+            blog_body = str(row["body"])
+    return render_template("post.html",
+    title = blog_title,
+    body = blog_body)
 
 @app.route('/newpost')
 def newpost():
@@ -99,4 +109,3 @@ def add_blog():
 
 app.run()
 #if __name__ == '__app__':
-    
