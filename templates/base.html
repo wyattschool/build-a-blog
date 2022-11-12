@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css')}}" />
+    </head>
+
+    <header>
+        <a href="/blog" id="headerLink">Main Blog Page</a>
+        <a href="/newpost" id="headerLink">Add a Blog Entry</a>
+    </header>
+        {% block content %}
+        {% endblock %}
+    <body>
+    </body>
+    <footer>
+        <p>© 2022</p>
+    </footer>
+</html>

@@ -1,22 +1,10 @@
-<html lang="en">
-    <head>
-        <title>Blog</title>
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css')}}" />
-    </head>
-
-    <header>
-        <a href="/blog" id="headerLink">Main Blog Page</a>
-        <a href="/newpost" id="headerLink">Add a Blog Entry</a>
-    </header>
-
-    <body>
-        <h1 id="pageTitle">Build a Blog</h1>
-        {% for i in range(0, titlesLen) %}
-        <a href="blog{{i+1}}" id="postLink"><h2 id={{i}}>{{ titles[i] }}</h2></a>
-            {{ bodies[i] }}
-            <hr>
-            {% endfor %}
-    </body>
-
-</html>
-
+{% extends "base.html" %}
+{% block title %}Blog{% endblock %}
+{% block content %}
+<h1 id="pageTitle">Build a Blog</h1>
+{% for i in range(0, titlesLen) %}
+<a href="blog{{i+1}}" id="postLink"><h2 id={{i}}>{{ titles[i] }}</h2></a>
+    {{ bodies[i] }}
+    <hr>
+    {% endfor %}
+{% endblock %}
