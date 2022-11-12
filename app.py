@@ -79,7 +79,7 @@ def blog():
     bodies = bodies)
 
 @app.route("/blog<int:id>",methods=["GET"])
-def displaysingle_post(id=None):
+def display_single_post(id=None):
     if id > get_post_total() or id == 0:
         return flask.redirect(url_for("blog"))
     else:
@@ -98,35 +98,40 @@ def newpost():
 
 @app.route('/newpost',methods=["POST"])
 def add_blog():
+    need_title = "Please enter a title for your blog."
+    need_body = "Please enter a body."
     blog_title = request.form['title']
     blog_body = request.form['body']
     if blog_title == "" or blog_title == " ":
-        feedback_message = "Please enter a title for your blog."
+        feedback_message = need_title
         if blog_body == "" or blog_body == " ":
             feedback_message = "Please enter a title for you blog and enter a body."
-        return render_template("blogform.html",
+            return render_template("blogform.html",
         title = blog_title,
+        needTitle = need_title,
+        body = blog_body,
+        needBody = need_body,
+        feedback = feedback_message)
+        else:
+            return render_template("blogform.html",
+        title = blog_title,
+        needTitle = need_title,
         body = blog_body,
         feedback = feedback_message)
 
+
     if blog_body == "" or blog_body == " ":
-        feedback_message = "Please enter a body."
+        feedback_message = need_body
         return render_template("blogform.html",
         title = blog_title,
         body = blog_body,
+        needBody = need_body,
         feedback = feedback_message)
     
     else:
         create_blog(blog_title, blog_body)
         new_post = "blog" + str(get_post_total())
         return flask.redirect((new_post))
-
-@app.route('/test<post_id>')
-def test(post_id):
-    #We want to redirect to a post with the provided id number from the url
-    id = post_id
-    url = "blog"+str(id)
-    return flask.redirect((url))
 
 app.run()
 #if __name__ == '__app__':
