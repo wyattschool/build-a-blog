@@ -19,6 +19,7 @@ class Blog(db.Model):
         self.title = title
         self.body = body
 
+#Get the total count of ids in the database blog table.
 def get_post_total():
     blog_ids = []
     with app.app_context():
@@ -28,11 +29,13 @@ def get_post_total():
             blog_ids.append(blog_id)
         post_total = len(blog_ids)
         return post_total
-        
+
+#Take input, create object, and add it to the database.
 def create_blog(title, body):
     newblog = Blog(title, body)
     alter_database(newblog)
 
+#Take input object and add it to the database.
 def alter_database(object):
     with app.app_context():
         try:
@@ -43,9 +46,11 @@ def alter_database(object):
         else:
             db.session.commit()
 
+#Get all the post titles and bodies in the table.
 def get_posts():
     blog_output = []
     with app.app_context():
+        #Query the database for all the titles and bodies in the table.
         blogs = (db.session.query(Blog.title,Blog.body).all())
         for row in blogs:
             blog_title = str(row["title"])
@@ -54,10 +59,12 @@ def get_posts():
             blog_output.append(blog_body)
         return blog_output
 
+#Reroute all of requests to to /blog.
 @app.route("/")
 def index():
     return flask.redirect(url_for("blog"))
 
+#Display all the posts in the table on a single page.
 @app.route("/blog")
 def blog():
     blogs = get_posts()
@@ -66,9 +73,11 @@ def blog():
     i = 0
     for blog in blogs:
         mod = i % 2
+        #Get every even item in the list and add it to the list of blog bodies.
         if mod > 0:
             bodies.append(blog)
             i += 1
+        #Get every odd item in the list and add it to the list of blog titles.
         else:
             titles.append(blog)
             i += 1
@@ -78,12 +87,15 @@ def blog():
     titles = titles,
     bodies = bodies)
 
+#Display the blog for the id provided after "blog" in the URL.
 @app.route("/blog<int:id>",methods=["GET"])
 def display_single_post(id=None):
+    #If the id provided is more than the ids in the database or equal to 0 reroute it to /blog.
     if id > get_post_total() or id == 0:
         return flask.redirect(url_for("blog"))
     else:
         with app.app_context():
+            #Query the database for the post's title and body based on the id in the URL.
             blogs = (db.session.query(Blog.title,Blog.body).filter(Blog.id == id))
             for row in blogs:
                 blog_title = str(row["title"])
@@ -92,18 +104,22 @@ def display_single_post(id=None):
         title = blog_title,
         body = blog_body)
 
+#Render a form to create a new post.
 @app.route('/newpost')
 def newpost():
     return render_template("blogform.html")
 
+#Take the form input check it, provide feedback if needed about form input, and submit the input to database.
 @app.route('/newpost',methods=["POST"])
 def add_blog():
     need_title = "Please enter a title for your blog."
     need_body = "Please enter a body."
     blog_title = request.form['title']
     blog_body = request.form['body']
+    #If title input is empty provide feedback.
     if blog_title == "" or blog_title == " ":
         feedback_message = need_title
+        #If title and body input is empty provide feedback.
         if blog_body == "" or blog_body == " ":
             feedback_message = "Please enter a title for you blog and enter a body."
             return render_template("blogform.html",
@@ -119,7 +135,7 @@ def add_blog():
         body = blog_body,
         feedback = feedback_message)
 
-
+    #If body input is empty provide feedback.
     if blog_body == "" or blog_body == " ":
         feedback_message = need_body
         return render_template("blogform.html",
@@ -128,6 +144,7 @@ def add_blog():
         needBody = need_body,
         feedback = feedback_message)
     
+    #If the input looks good commit create the database entry and reroute to page showing the new post
     else:
         create_blog(blog_title, blog_body)
         new_post = "blog" + str(get_post_total())
